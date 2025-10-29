@@ -2,3 +2,5 @@
 jbeam_editor
 requirements.txt
 .DS_Store
+.vscode
+.venv/

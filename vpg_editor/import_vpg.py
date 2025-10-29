@@ -183,7 +183,7 @@ def generate_mesh(
 
     mesh[constants.MESH_VPG_FILE_PATH] = file_path
     mesh[constants.MESH_VERTEX_COUNT] = len(bm.verts)
-    mesh[constants.MESH_TRIANGEL_COUNT] = len(bm.faces)
+    mesh[constants.MESH_TRIANGLE_COUNT] = len(bm.faces)
 
 
 def import_vpg(

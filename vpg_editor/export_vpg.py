@@ -35,26 +35,35 @@ class VPG_EDITOR_OT_export_vpg(Operator, ExportHelper):
             self.report({'ERROR'}, 'Selected object has no mesh data')
             return {'CANCELLED'}
 
-        # 从 Mesh 中获取 MESH_DATA
-        try:
-            vpg_text = mesh.get(constants.MESH_DATA)
-        except Exception:
-            vpg_text = None
-
         # 获取映射路径
         try:
             mapped_path = mesh.get(constants.MESH_VPG_FILE_PATH)
         except Exception:
             mapped_path = None
 
-        scene = context.scene
+        vpg_text: str | None = None
 
-        # 如果 MESH_DATA 为 None，则尝试从内部文本编辑器读取
-        if vpg_text is None and mapped_path is not None:
+        # 优先使用内部文本编辑器中的内容，以确保头信息等手动修改也能导出
+        if mapped_path:
             try:
-                vpg_text = text_editor.read_int_file(mapped_path)
+                editor_text = text_editor.read_int_file(mapped_path)
             except Exception:
-                vpg_text = None
+                editor_text = None
+
+            if isinstance(editor_text, str):
+                vpg_text = editor_text
+
+        # 如果内部文本为空，则回退到网格上缓存的数据
+        if vpg_text is None:
+            try:
+                cached_text = mesh.get(constants.MESH_DATA)
+            except Exception:
+                cached_text = None
+
+            if isinstance(cached_text, str):
+                vpg_text = cached_text
+
+        scene = context.scene
 
         if vpg_text is None:
             self.report({'ERROR'}, 'No VPG data found for selected mesh')

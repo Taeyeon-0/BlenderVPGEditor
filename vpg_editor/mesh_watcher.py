@@ -137,8 +137,13 @@ def _sync_object_text(context: bpy.types.Context, obj: bpy.types.Object) -> bool
         return False
 
     stored_text = mesh.get(constants.MESH_DATA)
-    base_text = stored_text if isinstance(stored_text, str) else text_editor.read_int_file(vpg_file_path)
-    if not isinstance(base_text, str):
+
+    editor_text = text_editor.read_int_file(vpg_file_path)
+    if isinstance(editor_text, str):
+        base_text = editor_text
+    elif isinstance(stored_text, str):
+        base_text = stored_text
+    else:
         base_text = None
 
     new_text = import_vpg.mesh_to_vpg_text(mesh, obj, base_text)
